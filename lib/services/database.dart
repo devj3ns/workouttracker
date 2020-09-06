@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+
 import 'package:workouttracker/models/userData.dart';
 import 'package:workouttracker/models/workout.dart';
 
@@ -37,7 +37,8 @@ class DatabaseService {
     return userDataCollection
         .document(uid)
         .collection("workouts")
-        .document(workout.uid).delete();
+        .document(workout.uid)
+        .delete();
   }
 
   //workout list from snapshot
@@ -47,7 +48,7 @@ class DatabaseService {
     }).toList();
   }
 
-  //get workouts stream
+  //get all workouts as stream
   Stream<List<Workout>> get workouts {
     return userDataCollection
         .document(uid)
@@ -55,5 +56,38 @@ class DatabaseService {
         .orderBy("timestamp", descending: true)
         .snapshots()
         .map(_workoutsFromSnapshot);
+  }
+
+  //get workouts made on a specific date as stream
+  Stream<List<Workout>> workoutsAtDate(DateTime dateTime) {
+    DateTime startOfDay =
+        new DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0);
+    DateTime endOfDay =
+        new DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
+
+    return userDataCollection
+        .document(uid)
+        .collection("workouts")
+        .where("timestamp", isGreaterThan: startOfDay)
+        .where("timestamp", isLessThanOrEqualTo: endOfDay)
+        .orderBy("timestamp", descending: true)
+        .snapshots()
+        .map(_workoutsFromSnapshot);
+  }
+
+  //returns true if their is a workout tracked on that day
+  Future<int> workoutsOnThatDay(DateTime dateTime)async{
+    DateTime startOfDay =
+        new DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0);
+    DateTime endOfDay =
+        new DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
+
+    return await userDataCollection
+        .document(uid)
+        .collection("workouts")
+        .where("timestamp", isGreaterThan: startOfDay)
+        .where("timestamp", isLessThanOrEqualTo: endOfDay)
+        .snapshots()
+        .length;
   }
 }

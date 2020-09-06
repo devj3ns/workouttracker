@@ -1,20 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:workouttracker/authenticate/authenticate.dart';
 
-import 'package:workouttracker/screens/navBar.dart';
+import 'package:workouttracker/authenticate/authenticate.dart';
+import 'home.dart';
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
+    print(user);
 
-    //return either Home (TabBar) or Authenticate widget
     if (user == null) {
       return Authenticate();
     } else {
-      return NavBar();
+      return Home();
     }
   }
 }

@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:workouttracker/screens/wrapper.dart';
+import 'package:workouttracker/screens/home.dart';
+
 import 'package:workouttracker/services/auth.dart';
+import 'package:workouttracker/widgets/loading.dart';
+import 'authenticate/authenticate.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,17 +17,39 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
 
-    return StreamProvider<FirebaseUser>.value(
-      value: AuthService().user,
-      child: MaterialApp(
-        theme: ThemeData(
-          textTheme: GoogleFonts.varelaRoundTextTheme(
-            Theme.of(context).textTheme,
-          ),
-          primaryColor: Color.fromRGBO(79, 172, 254, 1),
-          accentColor: Color.fromRGBO(249, 111, 92, 1),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.varelaRoundTextTheme(
+          Theme.of(context).textTheme,
         ),
-        home: Wrapper(),
+        primaryColor: Color.fromRGBO(79, 172, 254, 1),
+        accentColor: Color.fromRGBO(249, 111, 92, 1),
+      ),
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AuthService.instance(),
+      child: Consumer(
+        builder: (context, AuthService user, _) {
+          switch (user.status) {
+            case Status.Uninitialized:
+              return Loading(scaffold: true);
+            case Status.Unauthenticated:
+              return Authenticate();
+            case Status.Authenticating:
+              return Loading(scaffold: true,);
+            case Status.Authenticated:
+              return Home();
+          }
+          return Home();
+        },
       ),
     );
   }

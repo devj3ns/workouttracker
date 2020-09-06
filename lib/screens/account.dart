@@ -5,15 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:workouttracker/models/userData.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/services/database.dart';
-import 'package:workouttracker/shared/constants.dart';
+import 'package:workouttracker/widgets/loading.dart';
 
 class Account extends StatelessWidget {
-  final AuthService _auth = AuthService();
+
+  final AuthService authService;
+
+  Account({@required this.authService});
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<FirebaseUser>(context);
-    DatabaseService _database = DatabaseService(uid: user.uid);
+    DatabaseService _database = DatabaseService(uid: authService.user.uid);
 
     return Scaffold(
       appBar: AppBar(title: Text("Account")),
@@ -46,7 +48,10 @@ class Account extends StatelessWidget {
                       height: 70,
                     ),
                     RaisedButton(
-                      onPressed: _auth.signOut,
+                      onPressed: (){
+                        authService.signOut();
+                        Navigator.of(context).pop();
+                      },
                       child: Text("Logout"),
                     ),
                   ],
@@ -54,7 +59,7 @@ class Account extends StatelessWidget {
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return Loading();
           }
         },
       ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workouttracker/constants.dart';
+
 import 'package:workouttracker/services/auth.dart';
-import 'package:workouttracker/shared/background.dart';
-import 'package:workouttracker/shared/constants.dart';
-import 'package:workouttracker/shared/loading.dart';
+import 'package:workouttracker/widgets/background.dart';
+import 'package:workouttracker/widgets/loading.dart';
 
 class SignIn extends StatefulWidget {
   final toggleView;
@@ -14,7 +16,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final AuthService _auth = AuthService();
+  //final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -25,6 +27,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final _auth = Provider.of<AuthService>(context);
+
     return loading
         ? Loading()
         : Scaffold(
