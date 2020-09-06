@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "378636028908",
+    "firebase_url": "https://workouttracker-76b7f.firebaseio.com",
+    "project_id": "workouttracker-76b7f",
+    "storage_bucket": "workouttracker-76b7f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378636028908:android:6e1732a7cb915f988f4ec9",
+        "android_client_info": {
+          "package_name": "de.jensbecker.workouttracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378636028908-ef39e7gubb181k6fb3g1jtvvp35gck6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmN8sAHgIxG0g508Sdo9tvUXtZ2jgSpDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378636028908-ef39e7gubb181k6fb3g1jtvvp35gck6q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
