@@ -36,7 +36,7 @@ class WeekRow extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(6.0),
               child: Text(
-                "Week No. " + selectedWeek.toString(),
+                "Calendar week " + selectedWeek.toString(),
                 style: TextStyle(
                   fontSize: 18,
                 ),

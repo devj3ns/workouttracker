@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +13,6 @@ import '../addButton.dart';
 import '../frostedBox.dart';
 import 'package:workouttracker/dateExtensions.dart';
 
-
 class DayWorkoutList extends StatelessWidget {
   final DateTime date;
 
@@ -26,11 +24,24 @@ class DayWorkoutList extends StatelessWidget {
     DatabaseService _database = DatabaseService(uid: user.uid);
 
     bool isInFuture = date.isAfter(DateTime.now());
+    String weekday = DateFormat('EEEE').format(date);
+
+    String getPlaceHolderText() {
+      return isInFuture
+          ? "If you had a time machine you could probably see a workout her ;)"
+          : date.isToday()
+              ? "You didn't work out today."
+              : date.isYesterday()
+                  ? "You didn't work out yesterday."
+                  : date.isThisWeek()
+                      ? "You didn't work out on " + weekday + "."
+                      : "You didn't work out this day.";
+    }
 
     return Padding(
       padding: const EdgeInsets.all(4.5),
       child: FrostedBox(
-        color: Colors.blueGrey[100],
+        colorHighlight: true,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -40,9 +51,7 @@ class DayWorkoutList extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                date.isToday()
-                    ? "Today"
-                    : DateFormat('EEEE').format(date),
+                date.isToday() ? "Today" : weekday,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -58,10 +67,7 @@ class DayWorkoutList extends StatelessWidget {
                     } else {
                       if (snapshot.data.length == 0) {
                         return Center(
-                          child: Text(
-                              isInFuture
-                                  ? "If you had a time machine you could probably see a workout her ;)"
-                                  : "You didn't work out this day.",
+                          child: Text(getPlaceHolderText(),
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16)),
                         );

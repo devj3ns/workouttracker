@@ -29,8 +29,8 @@ class DayButton extends StatelessWidget {
     DatabaseService _database = DatabaseService(uid: user.uid);
 
     return FrostedBox(
-      color: currentlySelected ? Colors.blueGrey[100] : null,
-      borderColor: date.isToday() ? Colors.black12.withOpacity(0.5) : Colors.transparent,
+      colorHighlight: currentlySelected,
+      borderHighlight: date.isToday(),
       child: InkWell(
         onTap: () => changeDate(date),
         child: Padding(

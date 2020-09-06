@@ -15,9 +15,26 @@ extension DateExtensions on DateTime {
         this.day == other.day;
   }
 
+  bool isYesterday() {
+    DateTime now = DateTime.now();
+    return DateTime(this.year, this.month, this.day).difference(DateTime(now.year, now.month, now.day)).inDays == -1;
+  }
+
   int getWeekNumber() {
+    //get Week Number according to ISO 8601
+    int daysToAdd = DateTime.thursday - this.weekday;
+    DateTime thursdayDate = daysToAdd > 0 ? this.add(Duration(days: daysToAdd)) : this.subtract(Duration(days: daysToAdd.abs()));
+    int dayOfYearThursday = thursdayDate.difference(DateTime(thursdayDate.year, 1, 1)).inDays;
+    return 1 + ((dayOfYearThursday - 1) / 7).floor();
+  }
+
+  /*int getWeekNumber() {
     int dayOfYear = int.parse(DateFormat("D").format(this));
     return ((dayOfYear - DateTime.now().weekday + 10) / 7).floor();
+  }*/
+
+  bool isThisWeek(){
+    return this.getWeekNumber() == DateTime.now().getWeekNumber();
   }
 }
 

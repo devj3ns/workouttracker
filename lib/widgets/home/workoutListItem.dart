@@ -23,7 +23,7 @@ class WorkoutListItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3.0),
       child: FrostedBox(
-        color: Colors.blueGrey.shade100,
+        customColor: Colors.blueGrey.shade100.withOpacity(0.8),
         child: ListTile(
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
