@@ -12,28 +12,20 @@ import 'package:workouttracker/widgets/home/workoutListItem.dart';
 import 'package:workouttracker/widgets/loading.dart';
 import '../addButton.dart';
 import '../frostedBox.dart';
+import 'package:workouttracker/dateExtensions.dart';
+
 
 class DayWorkoutList extends StatelessWidget {
   final DateTime date;
 
   DayWorkoutList({@required this.date});
 
-  bool sameDay(DateTime dateTime1, DateTime dateTime2) {
-    if (dateTime1.day == dateTime2.day &&
-        dateTime1.month == dateTime2.month &&
-        dateTime1.year == dateTime2.year) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthService>(context).user;
     DatabaseService _database = DatabaseService(uid: user.uid);
 
-    bool isInFuture = !date.difference(DateTime.now()).isNegative;
+    bool isInFuture = date.isAfter(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.all(4.5),
@@ -48,7 +40,7 @@ class DayWorkoutList extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                sameDay(date, DateTime.now())
+                date.isToday()
                     ? "Today"
                     : DateFormat('EEEE').format(date),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

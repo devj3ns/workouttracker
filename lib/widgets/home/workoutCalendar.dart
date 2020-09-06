@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:workouttracker/dateExtensions.dart';
 
 import 'package:workouttracker/widgets/home/dayButton.dart';
 import 'package:workouttracker/widgets/home/dayWorkoutList.dart';
@@ -13,33 +13,8 @@ class WorkoutCalendar extends StatefulWidget {
 class _WorkoutCalendarState extends State<WorkoutCalendar> {
   PageController pageController;
   int currentTabIndex = DateTime.now().weekday - 1;
-  static int selectedWeek = getWeekNumber(DateTime.now());
-  static List<DateTime> datesInWeek = getDatesInWeek();
-
-  static int getWeekNumber(DateTime dateTime) {
-    int dayOfYear = int.parse(DateFormat("D").format(dateTime));
-    return ((dayOfYear - DateTime.now().weekday + 10) / 7).floor();
-  }
-
-  static List<DateTime> getDatesInWeek() {
-    final DateTime today = DateTime.now();
-    final int currentWeek = getWeekNumber(today);
-    final weekDifferences = currentWeek - selectedWeek;
-
-    final DateTime dayInSelectedWeek =
-        today.subtract(Duration(days: weekDifferences * 7));
-
-    final DateTime firstDayOfTheWeek = dayInSelectedWeek
-        .subtract(Duration(days: dayInSelectedWeek.weekday - 1));
-
-    List<DateTime> datesInWeek = [];
-
-    for (var i = 0; i < 7; i++) {
-      datesInWeek.add(firstDayOfTheWeek.add(Duration(days: i)));
-    }
-
-    return datesInWeek;
-  }
+  static int selectedWeek = DateTime.now().getWeekNumber();
+  static List<DateTime> datesInWeek = getDatesInWeekByWeekNumber(selectedWeek);
 
   @override
   void initState() {
@@ -57,23 +32,13 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
   void changeWeek(int difference) {
     setState(() {
       selectedWeek += difference;
-      datesInWeek = getDatesInWeek();
+      datesInWeek = getDatesInWeekByWeekNumber(selectedWeek);
     });
   }
 
   void changeTab(DateTime date) {
     pageController.animateToPage(date.weekday - 1,
         curve: Curves.easeInOut, duration: Duration(milliseconds: 275));
-  }
-
-  bool sameDay(DateTime dateTime1, DateTime dateTime2) {
-    if (dateTime1.day == dateTime2.day &&
-        dateTime1.month == dateTime2.month &&
-        dateTime1.year == dateTime2.year) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override
@@ -114,7 +79,7 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
                   currentTabIndex = index;
                 });
               },
-              children: getDatesInWeek()
+              children: getDatesInWeekByWeekNumber(selectedWeek)
                   .map((DateTime dateTime) => DayWorkoutList(date: dateTime))
                   .toList(),
             ),
