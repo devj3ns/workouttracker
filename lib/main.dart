@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:workouttracker/screens/authenticate/authenticate.dart';
 import 'package:workouttracker/screens/home.dart';
 
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/widgets/loading.dart';
-import 'authenticate/authenticate.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,8 +47,9 @@ class HomePage extends StatelessWidget {
               return Loading(scaffold: true,);
             case Status.Authenticated:
               return Home();
+            default:
+              return Home();
           }
-          return Home();
         },
       ),
     );

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:workouttracker/authenticate/register.dart';
-import 'package:workouttracker/authenticate/login.dart';
+import 'login.dart';
+import 'register.dart';
+
 
 class Authenticate extends StatefulWidget {
   @override
