@@ -7,7 +7,7 @@ import 'package:workouttracker/models/workout.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/services/database.dart';
 import 'package:workouttracker/widgets/frostedBox.dart';
-import 'package:workouttracker/dateExtensions.dart';
+import 'package:workouttracker/shared/dateExtensions.dart';
 
 class DayButton extends StatelessWidget {
   final DateTime date;

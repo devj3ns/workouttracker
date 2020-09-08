@@ -4,19 +4,33 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import 'package:workouttracker/models/workout.dart';
-import 'package:workouttracker/screens/addWorkout.dart';
+import 'package:workouttracker/screens/workoutDetails.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/services/database.dart';
+import 'package:workouttracker/shared/routes.dart';
 import 'package:workouttracker/widgets/home/workoutListItem.dart';
 import 'package:workouttracker/widgets/loading.dart';
+import 'package:workouttracker/shared/dateExtensions.dart';
 import '../addButton.dart';
 import '../frostedBox.dart';
-import 'package:workouttracker/dateExtensions.dart';
+
 
 class DayWorkoutList extends StatelessWidget {
   final DateTime date;
 
   DayWorkoutList({@required this.date});
+
+  void openWorkoutDetailsScreen(
+      BuildContext context, DatabaseService database) {
+    Navigator.of(context).push(
+      SlideUpRoute(
+        page: WorkoutDetails(
+          dateTime: date,
+          database: database,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,16 +110,10 @@ class DayWorkoutList extends StatelessWidget {
                       height: 60,
                     )
                   : Center(
-                      child: AddButton(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddWorkout(
-                              dateTime: date,
-                              user: user,
-                            ),
-                          ),
-                        ),
+                      child: RoundIconButton(
+                        icon: Icons.add,
+                        onTap: () =>
+                            openWorkoutDetailsScreen(context, _database),
                       ),
                     ),
               SizedBox(

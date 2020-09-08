@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 
-class AddButton extends StatelessWidget {
-
+class RoundIconButton extends StatelessWidget {
   final Function onTap;
   final bool disable;
+  final IconData icon;
 
-  AddButton({@required this.onTap, this.disable});
-
-
+  RoundIconButton({
+    @required this.onTap,
+    this.disable,
+    @required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-
     List<Color> gradientColors = [
       Color.fromRGBO(20, 202, 201, 1),
       Color.fromRGBO(35, 233, 160, 1),
     ];
-    
+
     Color iconColor = Colors.white;
-    
-    if(disable != null){
-      if(disable == true){
+
+    if (disable != null) {
+      if (disable == true) {
         gradientColors = [
           Color.fromRGBO(20, 202, 201, 1).withOpacity(0.8),
           Color.fromRGBO(35, 233, 160, 1).withOpacity(0.8),
         ];
-        
+
         iconColor = Colors.white.withOpacity(0.8);
       }
     }
-    
-    return GestureDetector(
-      onTap:  disable != null && disable ? (){} : onTap,
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(100),
+      onTap: disable != null && disable ? () {} : onTap,
       child: Container(
         width: 60,
         height: 60,
@@ -50,7 +52,7 @@ class AddButton extends StatelessWidget {
         ),
         child: Center(
           child: Icon(
-            Icons.add,
+            icon,
             color: iconColor,
             size: 30,
           ),

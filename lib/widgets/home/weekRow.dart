@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:workouttracker/dateExtensions.dart';
 
+import 'package:workouttracker/shared/dateExtensions.dart';
 import 'package:workouttracker/widgets/frostedBox.dart';
 
 class WeekRow extends StatelessWidget {
@@ -12,7 +12,6 @@ class WeekRow extends StatelessWidget {
     @required this.changeWeek,
     @required this.selectedWeek,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +46,15 @@ class WeekRow extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: FaIcon(
                     Icons.arrow_forward_ios,
-                    color: nextWeekInFutureByWeekNumber(selectedWeek) ? Colors.grey : Colors.black,
+                    color: nextWeekInFutureByWeekNumber(selectedWeek)
+                        ? Colors.grey
+                        : Colors.black,
                     size: 18,
                   ),
                 ),
-                onTap: () => nextWeekInFutureByWeekNumber(selectedWeek) ? null : changeWeek(1) //adds one week,
+                onTap: () => nextWeekInFutureByWeekNumber(selectedWeek)
+                    ? null
+                    : changeWeek(1) //adds one week,
                 ),
           ],
         ),

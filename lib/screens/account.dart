@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:workouttracker/models/userData.dart';
 import 'package:workouttracker/services/auth.dart';
@@ -8,7 +6,6 @@ import 'package:workouttracker/services/database.dart';
 import 'package:workouttracker/widgets/loading.dart';
 
 class Account extends StatelessWidget {
-
   final AuthService authService;
 
   Account({@required this.authService});
@@ -48,7 +45,7 @@ class Account extends StatelessWidget {
                       height: 70,
                     ),
                     RaisedButton(
-                      onPressed: (){
+                      onPressed: () {
                         authService.signOut();
                         Navigator.of(context).pop();
                       },

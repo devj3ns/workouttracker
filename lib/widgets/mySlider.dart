@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workouttracker/widgets/mySliderThumbs.dart';
 
-
 class MySlider extends StatefulWidget {
   final double sliderHeight;
   final int min;
@@ -15,6 +14,7 @@ class MySlider extends StatefulWidget {
   final bool isDurationSlider;
   final bool isIntensitySlider;
   final bool isRatingSlider;
+  final double initialValue;
 
   MySlider({
     this.sliderHeight = 65,
@@ -28,6 +28,7 @@ class MySlider extends StatefulWidget {
     this.isRatingSlider = false,
     this.isIntensitySlider = false,
     this.fullWidth = false,
+    this.initialValue,
   });
 
   @override
@@ -36,6 +37,14 @@ class MySlider extends StatefulWidget {
 
 class _MySliderState extends State<MySlider> {
   double _value = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialValue != null) {
+      _value = widget.initialValue / widget.max;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

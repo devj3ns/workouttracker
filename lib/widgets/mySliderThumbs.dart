@@ -19,26 +19,26 @@ class MySliderThumbCircle extends SliderComponentShape {
     return Size.fromRadius(thumbRadius);
   }
 
-  IconData getRatingIcon(int value){
-    switch (value){
-      case 1:
+  IconData getRatingIcon(int value) {
+    switch (value) {
+      case 0:
         return FontAwesomeIcons.meh;
-      case 2:
+      case 5:
         return FontAwesomeIcons.smile;
-      case 3:
+      case 10:
         return FontAwesomeIcons.laughBeam;
       default:
         return FontAwesomeIcons.smile;
     }
   }
 
-  IconData getIntensityIcon(int value){
-    switch (value){
-      case 1:
+  IconData getIntensityIcon(int value) {
+    switch (value) {
+      case 0:
         return FontAwesomeIcons.feather;
-      case 2:
+      case 5:
         return FontAwesomeIcons.weightHanging;
-      case 3:
+      case 10:
         return FontAwesomeIcons.dumbbell;
       default:
         return FontAwesomeIcons.dumbbell;
@@ -66,7 +66,9 @@ class MySliderThumbCircle extends SliderComponentShape {
       ..color = Colors.white //Thumb Background Color
       ..style = PaintingStyle.fill;
 
-    final icon = isRating ? getRatingIcon(getIntValue(value)) : getIntensityIcon(getIntValue(value));
+    final icon = isRating
+        ? getRatingIcon(getIntValue(value))
+        : getIntensityIcon(getIntValue(value));
 
     TextSpan span = new TextSpan(
       style: new TextStyle(

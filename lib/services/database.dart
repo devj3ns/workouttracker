@@ -32,6 +32,19 @@ class DatabaseService {
         .add(workout.toDocument());
   }
 
+  //updates workout in db
+  Future updateWorkout(Workout workout) async {
+    if (workout.uid == null) {
+      throw ("Cannot update workout in database because no uid is provided (workout.uid == null)!");
+    } else {
+      return await userDataCollection
+          .document(uid)
+          .collection("workouts")
+          .document(workout.uid)
+          .updateData(workout.toDocument());
+    }
+  }
+
   //delete workout from db
   Future deleteWorkout(Workout workout) async {
     return userDataCollection
@@ -76,7 +89,7 @@ class DatabaseService {
   }
 
   //returns true if their is a workout tracked on that day
-  Future<int> workoutsOnThatDay(DateTime dateTime)async{
+  Future<int> workoutsOnThatDay(DateTime dateTime) async {
     DateTime startOfDay =
         new DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0);
     DateTime endOfDay =

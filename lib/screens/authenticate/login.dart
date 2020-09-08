@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workouttracker/constants.dart';
 
+import 'package:workouttracker/shared/constants.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/widgets/background.dart';
 import 'package:workouttracker/widgets/loading.dart';
@@ -16,7 +16,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  //final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 

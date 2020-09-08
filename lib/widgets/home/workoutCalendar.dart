@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:workouttracker/dateExtensions.dart';
 
+import 'package:workouttracker/shared/dateExtensions.dart';
 import 'package:workouttracker/widgets/home/dayButton.dart';
 import 'package:workouttracker/widgets/home/dayWorkoutList.dart';
 import 'package:workouttracker/widgets/home/weekRow.dart';
@@ -45,7 +45,7 @@ class _WorkoutCalendarState extends State<WorkoutCalendar> {
   Widget build(BuildContext context) {
     return Container(
       height: 596,
-      child: ListView(
+      child: Column(
         children: <Widget>[
           WeekRow(
             changeWeek: changeWeek,

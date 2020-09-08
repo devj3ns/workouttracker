@@ -3,9 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:workouttracker/models/workout.dart';
+import 'package:workouttracker/screens/workoutDetails.dart';
 import 'package:workouttracker/services/database.dart';
+import 'package:workouttracker/shared/routes.dart';
 import 'package:workouttracker/widgets/frostedBox.dart';
-
 
 class WorkoutListItem extends StatelessWidget {
   WorkoutListItem({
@@ -15,6 +16,18 @@ class WorkoutListItem extends StatelessWidget {
 
   final Workout workout;
   final DatabaseService database;
+
+  void openWorkoutDetailsScreen(BuildContext context) {
+    Navigator.of(context).push(
+      SlideUpRoute(
+        page: WorkoutDetails(
+          database: database,
+          dateTime: workout.timestamp,
+          initialWorkoutData: workout,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +49,8 @@ class WorkoutListItem extends StatelessWidget {
           ),
           title: Text(workout.duration.toString() + "min " + workout.category),
           subtitle: Text(date),
-          trailing: IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => database.deleteWorkout(workout),
-          ),
         ),
+        onTap: () => openWorkoutDetailsScreen(context),
       ),
     );
   }

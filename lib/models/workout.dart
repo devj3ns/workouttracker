@@ -4,8 +4,8 @@ class Workout {
   final String uid;
   final String category; //Upper body, shoulders, chest....
   final int duration; //5-60min
-  final int intensity; //1-3 (1: easy, 2: medium, 3: hard)
-  final int rating; //1-3 (1: exhausted, 2: okay, 3: happy)
+  final int intensity; //0: easy, 5: medium, 10: hard)
+  final int rating; //0: exhausted, 5: okay, 10: happy)
   final String note;
   final DateTime timestamp;
 
@@ -22,7 +22,7 @@ class Workout {
   factory Workout.fromDocument(DocumentSnapshot doc) {
     return Workout(
       uid: doc.documentID,
-      category: categories[doc["category"]], //übersetze int aus DB zu String
+      category: categories[doc["category"]], //translate id from db to string (see Map below)
       duration: doc["duration"],
       intensity: doc["intensity"],
       rating: doc["rating"],
@@ -34,7 +34,7 @@ class Workout {
   Map<String, dynamic> toDocument() {
     return {
       "category": categories.keys.firstWhere((key) =>
-          categories[key] == this.category), //übersetze String zu int für DB
+          categories[key] == this.category), //translate String to id for db (see Map below)
       "duration": this.duration,
       "intensity": this.intensity,
       "rating": this.rating,
