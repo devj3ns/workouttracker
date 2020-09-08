@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      child: Container(),
-      painter: CurvePainter(),
+    return Stack(
+      children: [
+        Container(color: Colors.white),
+        CustomPaint(
+          child: Container(),
+          painter: CurvePainter(),
+        ),
+      ],
     );
   }
 }

@@ -29,10 +29,12 @@ class WorkoutListItem extends StatelessWidget {
     );
   }
 
+  String get timeStr => DateFormat.Hm().format(workout.timestamp);
+  String get titleStr =>
+      workout.duration.toString() + "min " + workout.category;
+
   @override
   Widget build(BuildContext context) {
-    String date = DateFormat.Hm().format(workout.timestamp);
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3.0),
       child: FrostedBox(
@@ -47,8 +49,8 @@ class WorkoutListItem extends StatelessWidget {
               ),
             ],
           ),
-          title: Text(workout.duration.toString() + "min " + workout.category),
-          subtitle: Text(date),
+          title: Text(titleStr),
+          subtitle: Text(timeStr),
         ),
         onTap: () => openWorkoutDetailsScreen(context),
       ),

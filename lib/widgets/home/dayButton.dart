@@ -20,11 +20,11 @@ class DayButton extends StatelessWidget {
     @required this.currentlySelected,
   });
 
+  String get weekdayStr => DateFormat('EEEE').format(date).substring(0, 1);
+  String get dayStr => date.day.toString().padLeft(2, "0");
+
   @override
   Widget build(BuildContext context) {
-    final String weekdayAbbr = DateFormat('EEEE').format(date).substring(0, 1);
-    final String day = date.day.toString().padLeft(2, "0");
-
     final user = Provider.of<AuthService>(context).user;
     DatabaseService _database = DatabaseService(uid: user.uid);
 
@@ -38,14 +38,14 @@ class DayButton extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                weekdayAbbr,
+                weekdayStr,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
               ),
               Text(
-                day + ".",
+                dayStr + ".",
                 style: TextStyle(
                   fontSize: 15,
                 ),

@@ -8,11 +8,8 @@ import 'package:workouttracker/widgets/home/workoutCalendar.dart';
 import 'account.dart';
 
 class Home extends StatelessWidget {
-  void openAccountScreen(BuildContext context) {
-    AuthService authService = Provider.of<AuthService>(context);
-
-    Navigator.push(
-      context,
+  void openAccountScreen(BuildContext context, AuthService authService) {
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Account(
           authService: authService,
@@ -23,6 +20,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthService authService = Provider.of<AuthService>(context);
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -44,7 +43,7 @@ class Home extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.1,
                         child: FrostedBox(
                           customColor: Color.fromRGBO(9, 234, 254, 0.4),
-                          onTap: () => openAccountScreen(context),
+                          onTap: () => openAccountScreen(context, authService),
                           borderRadius: 100,
                           child: Center(
                             child: Text(

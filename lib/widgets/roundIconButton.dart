@@ -4,11 +4,13 @@ class RoundIconButton extends StatelessWidget {
   final Function onTap;
   final bool disable;
   final IconData icon;
+  final String heroTag;
 
   RoundIconButton({
     @required this.onTap,
     this.disable,
     @required this.icon,
+    this.heroTag = "",
   });
 
   @override
@@ -34,27 +36,30 @@ class RoundIconButton extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(100),
       onTap: disable != null && disable ? () {} : onTap,
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: gradientColors,
+      child: Hero(
+        tag: heroTag,
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: gradientColors,
+            ),
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(5, 5),
+                blurRadius: 10,
+              )
+            ],
           ),
-          borderRadius: BorderRadius.circular(100),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(5, 5),
-              blurRadius: 10,
-            )
-          ],
-        ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: 30,
+          child: Center(
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 30,
+            ),
           ),
         ),
       ),

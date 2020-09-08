@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 
 import 'package:workouttracker/models/workout.dart';
 import 'package:workouttracker/services/database.dart';
-import 'package:workouttracker/widgets/addButton.dart';
+import 'package:workouttracker/widgets/roundIconButton.dart';
 import 'package:workouttracker/widgets/frostedBox.dart';
 import 'package:workouttracker/widgets/mySlider.dart';
-import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/shared/constants.dart';
+import 'package:workouttracker/shared/constants.dart';
 
 class WorkoutDetails extends StatefulWidget {
   final DateTime dateTime;
@@ -28,28 +28,32 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
   bool disableSaveButton = true;
   FocusNode noteFocusNote = new FocusNode();
 
-  // text field states
+  //form values
   String category;
   double duration;
   double intensity = 0; //0, 5 or 10
   double rating = 0; //0, 5 or 10
   String note = '';
 
-  bool isAddWorkoutScreen() {
-    return widget.initialWorkoutData == null;
-  }
+  bool get isAddWorkoutScreen => widget.initialWorkoutData == null;
+  String get dateStr => DateFormat.MMMEd().format(widget.dateTime);
+  String get timeStr => DateFormat.Hm().format(widget.dateTime);
 
   @override
   void initState() {
     super.initState();
 
     if (widget.initialWorkoutData != null) {
-      category = widget.initialWorkoutData.category;
-      duration = widget.initialWorkoutData.duration.toDouble();
-      intensity = widget.initialWorkoutData.intensity.toDouble();
-      rating = widget.initialWorkoutData.rating.toDouble();
-      note = widget.initialWorkoutData.note;
+      initFormValues();
     }
+  }
+
+  void initFormValues() {
+    category = widget.initialWorkoutData.category;
+    duration = widget.initialWorkoutData.duration.toDouble();
+    intensity = widget.initialWorkoutData.intensity.toDouble();
+    rating = widget.initialWorkoutData.rating.toDouble();
+    note = widget.initialWorkoutData.note;
   }
 
   void save({bool add}) async {
@@ -72,34 +76,35 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
     setState(() => disableSaveButton = true);
   }
 
-  void changeDuration(double newDuration) {
-    setState(() {
-      duration = newDuration;
-      if (duration > 0) {
+  //the slider widgets use this method to provide their values to this stateful widget
+  void setFormValues(
+      {double newDuration,
+      double newIntensity,
+      double newRating,
+      String newCategory}) {
+    if (newDuration != null) {
+      setState(() {
+        duration = newDuration;
+        if (duration > 0) {
+          disableSaveButton = false;
+        }
+      });
+    } else if (newIntensity != null) {
+      setState(() {
+        intensity = newIntensity;
         disableSaveButton = false;
-      }
-    });
-  }
-
-  void changeIntensity(double newIntensity) {
-    setState(() {
-      intensity = newIntensity;
-      disableSaveButton = false;
-    });
-  }
-
-  void changeRating(double newRating) {
-    setState(() {
-      rating = newRating;
-      disableSaveButton = false;
-    });
-  }
-
-  void changeCategory(String newCategory) {
-    setState(() {
-      category = newCategory;
-      disableSaveButton = false;
-    });
+      });
+    } else if (newRating != null) {
+      setState(() {
+        rating = newRating;
+        disableSaveButton = false;
+      });
+    } else if (category != null) {
+      setState(() {
+        category = newCategory;
+        disableSaveButton = false;
+      });
+    }
   }
 
   @override
@@ -138,19 +143,32 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                               child: Icon(
                                 Icons.arrow_back_ios,
                                 color: Colors.white,
-                                size: 21,
+                                size: 23,
                               ),
                             ),
                           ),
-                          Text(
-                            DateFormat.MMMEd().format(widget.dateTime),
-                            style: TextStyle(
-                              color: Colors.black87.withOpacity(0.7),
-                              fontSize: 18,
-                            ),
-                            textAlign: TextAlign.center,
+                          Column(
+                            children: [
+                              Text(
+                                dateStr,
+                                style: TextStyle(
+                                  color: Colors.black87.withOpacity(0.7),
+                                  fontSize: 18,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                timeStr,
+                                style: TextStyle(
+                                  color: Colors.black87.withOpacity(0.7),
+                                ),
+                              ),
+                            ],
                           ),
-                          isAddWorkoutScreen()
+                          isAddWorkoutScreen
                               ? SizedBox(
                                   height:
                                       MediaQuery.of(context).size.width * 0.14,
@@ -174,7 +192,7 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                     child: Icon(
                                       Icons.delete,
                                       color: Colors.white,
-                                      size: 21,
+                                      size: 23,
                                     ),
                                   ),
                                 ),
@@ -182,7 +200,7 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        isAddWorkoutScreen() ? "Add Workout" : "Edit Workout",
+                        isAddWorkoutScreen ? "Track Workout" : "Edit Workout",
                         style: TextStyle(
                           color: Colors.black87,
                           fontSize: 27,
@@ -201,7 +219,8 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                             );
                           },
                         ).toList(),
-                        onChanged: changeCategory,
+                        onChanged: (newCategory) =>
+                            setFormValues(newCategory: newCategory),
                         decoration: textInputDecoration.copyWith(
                             hintText: 'Category',
                             prefixIcon: Icon(Icons.category)),
@@ -213,7 +232,8 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                         divisions: 12,
                         icon: Icons.timelapse,
                         text: "min",
-                        changeValue: changeDuration,
+                        changeValue: (newDuration) =>
+                            setFormValues(newDuration: newDuration),
                         isDurationSlider:
                             true, //damit es Rechteckig wird und 'min' nach Zahl hat
                         initialValue:
@@ -226,7 +246,8 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                         divisions: 2,
                         icon: FontAwesomeIcons.dumbbell,
                         text: "Intensity",
-                        changeValue: changeIntensity,
+                        changeValue: (newIntensity) =>
+                            setFormValues(newIntensity: newIntensity),
                         isIntensitySlider: true,
                         initialValue: widget.initialWorkoutData != null
                             ? intensity
@@ -239,7 +260,8 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                         divisions: 2,
                         icon: FontAwesomeIcons.smile,
                         text: "Rating",
-                        changeValue: changeRating,
+                        changeValue: (newRating) =>
+                            setFormValues(newRating: newRating),
                         isRatingSlider: true,
                         initialValue:
                             widget.initialWorkoutData != null ? rating : null,
@@ -263,9 +285,10 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                       SizedBox(height: 25.0),
                       Center(
                         child: RoundIconButton(
-                          icon: isAddWorkoutScreen() ? Icons.add : Icons.save,
+                          heroTag: "TransitionWithWorkoutDetailScreen",
+                          icon: isAddWorkoutScreen ? Icons.add : Icons.save,
                           onTap: () {
-                            if (isAddWorkoutScreen()) {
+                            if (isAddWorkoutScreen) {
                               save(add: true);
                               Navigator.pop(context);
                             } else {

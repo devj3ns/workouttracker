@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workouttracker/services/database.dart';
 
-enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
+enum Status { Uninitialized, Authenticated, Unauthenticated }
 
 class AuthService with ChangeNotifier {
   FirebaseAuth _auth;
@@ -16,24 +16,30 @@ class AuthService with ChangeNotifier {
   Status get status => _status;
   FirebaseUser get user => _user;
 
- Future<bool> signInWithEmailAndPassword(String email, String password) async {
+  //sign in with email and password (returns: FirebaseUser, if error: error message (String))
+  Future<dynamic> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      _status = Status.Authenticating;
-      notifyListeners();
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
+      AuthResult result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      FirebaseUser user = result.user;
+
+      return user;
     } catch (e) {
-      _status = Status.Unauthenticated;
-      notifyListeners();
-      return false;
+      switch (e.code) {
+        case ("ERROR_WRONG_PASSWORD"):
+          return ("You entered the wrong password.");
+        case ("ERROR_USER_NOT_FOUND"):
+          return ("No user found with that email.");
+        default:
+          return (e.code);
+      }
     }
   }
 
-  //register with email and password
-  Future registerWithEmailAndPassword(
+  //register with email and password (returns: FirebaseUser, if error: error message (String))
+  Future<dynamic> registerWithEmailAndPassword(
       String email, String password, String username) async {
-    _status = Status.Authenticating;
-    notifyListeners();
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -43,27 +49,14 @@ class AuthService with ChangeNotifier {
 
       return user;
     } catch (e) {
-      _status = Status.Unauthenticated;
-      notifyListeners();
-      print(e.toString());
-      return null;
+      switch (e.code) {
+        case ('ERROR_EMAIL_ALREADY_IN_USE'):
+          return ('This email is already in use.');
+        default:
+          return (e.code);
+      }
     }
   }
-
-/*  Future<bool> registerWithEmailAndPassword(
-      String email, String password) async {
-    try {
-      _status = Status.Authenticating;
-      notifyListeners();
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      return true;
-    } catch (e) {
-      _status = Status.Unauthenticated;
-      notifyListeners();
-      return false;
-    }
-  }*/
 
   Future signOut() async {
     _auth.signOut();

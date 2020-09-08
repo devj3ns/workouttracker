@@ -11,9 +11,8 @@ import 'package:workouttracker/shared/routes.dart';
 import 'package:workouttracker/widgets/home/workoutListItem.dart';
 import 'package:workouttracker/widgets/loading.dart';
 import 'package:workouttracker/shared/dateExtensions.dart';
-import '../addButton.dart';
+import '../roundIconButton.dart';
 import '../frostedBox.dart';
-
 
 class DayWorkoutList extends StatelessWidget {
   final DateTime date;
@@ -32,25 +31,23 @@ class DayWorkoutList extends StatelessWidget {
     );
   }
 
+  bool get isInFuture => date.isAfter(DateTime.now());
+  String get weekdayStr => DateFormat('EEEE').format(date);
+  String get placeholderText => isInFuture
+      ? "If you had a time machine you could probably see a workout her ;)"
+      : date.isToday()
+          ? "You didn't work out today."
+          : date.isYesterday()
+              ? "You didn't work out yesterday."
+              : date.isThisWeek()
+                  ? "You didn't work out on " + weekdayStr + "."
+                  : "You didn't work out this day.";
+  String get title => date.isToday() ? "Today" : weekdayStr;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthService>(context).user;
     DatabaseService _database = DatabaseService(uid: user.uid);
-
-    bool isInFuture = date.isAfter(DateTime.now());
-    String weekday = DateFormat('EEEE').format(date);
-
-    String getPlaceHolderText() {
-      return isInFuture
-          ? "If you had a time machine you could probably see a workout her ;)"
-          : date.isToday()
-              ? "You didn't work out today."
-              : date.isYesterday()
-                  ? "You didn't work out yesterday."
-                  : date.isThisWeek()
-                      ? "You didn't work out on " + weekday + "."
-                      : "You didn't work out this day.";
-    }
 
     return Padding(
       padding: const EdgeInsets.all(4.5),
@@ -65,7 +62,7 @@ class DayWorkoutList extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                date.isToday() ? "Today" : weekday,
+                title,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -81,7 +78,7 @@ class DayWorkoutList extends StatelessWidget {
                     } else {
                       if (snapshot.data.length == 0) {
                         return Center(
-                          child: Text(getPlaceHolderText(),
+                          child: Text(placeholderText,
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 16)),
                         );
@@ -111,6 +108,7 @@ class DayWorkoutList extends StatelessWidget {
                     )
                   : Center(
                       child: RoundIconButton(
+                        heroTag: "TransitionWithWorkoutDetailScreen",
                         icon: Icons.add,
                         onTap: () =>
                             openWorkoutDetailsScreen(context, _database),
