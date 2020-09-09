@@ -1,28 +1,39 @@
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workouttracker/services/database.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 enum Status { Uninitialized, Authenticated, Unauthenticated }
 
 class AuthService with ChangeNotifier {
   FirebaseAuth _auth;
-  FirebaseUser _user;
+  User _user;
   Status _status = Status.Uninitialized;
 
   AuthService.instance() : _auth = FirebaseAuth.instance {
-    _auth.onAuthStateChanged.listen(_onAuthStateChanged);
+    _auth.authStateChanges().listen(_onAuthStateChanged);
   }
 
   Status get status => _status;
-  FirebaseUser get user => _user;
+  User get user => _user;
 
-  //sign in with email and password (returns: FirebaseUser, if error: error message (String))
+  Future<void> _onAuthStateChanged(User firebaseUser) async {
+    if (firebaseUser == null) {
+      _status = Status.Unauthenticated;
+    } else {
+      _user = firebaseUser;
+      _status = Status.Authenticated;
+    }
+    notifyListeners();
+  }
+
+  //sign in with email and password (returns: User, if error: error message (String))
   Future<dynamic> signInWithEmailAndPassword(
       String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
+      User user = result.user;
 
       return user;
     } catch (e) {
@@ -37,13 +48,13 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  //register with email and password (returns: FirebaseUser, if error: error message (String))
+  //register with email and password (returns: User, if error: error message (String))
   Future<dynamic> registerWithEmailAndPassword(
       String email, String password, String username) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
+      User user = result.user;
 
       await DatabaseService(uid: user.uid).updateUserData(username);
 
@@ -58,20 +69,44 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  //signs in with google (and registers if new account) (returns: User, if error: error message (String))
+  Future<dynamic> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      //get the UserCredential
+      UserCredential result =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      User user = result.user;
+      bool isNewUser = result.additionalUserInfo.isNewUser;
+
+      //if new user (not registered yet) create a UserData document in the database
+      if (isNewUser) {
+        await DatabaseService(uid: user.uid).updateUserData(user.displayName);
+      }
+
+      return user;
+    } catch (e) {
+      return (e.code);
+    }
+  }
+
   Future signOut() async {
-    _auth.signOut();
+    await _auth.signOut();
     _status = Status.Unauthenticated;
     notifyListeners();
     return Future.delayed(Duration.zero);
-  }
-
-  Future<void> _onAuthStateChanged(FirebaseUser firebaseUser) async {
-    if (firebaseUser == null) {
-      _status = Status.Unauthenticated;
-    } else {
-      _user = firebaseUser;
-      _status = Status.Authenticated;
-    }
-    notifyListeners();
   }
 }

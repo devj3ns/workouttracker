@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:workouttracker/models/userData.dart';
 
 import 'package:workouttracker/services/auth.dart';
+import 'package:workouttracker/services/database.dart';
 import 'package:workouttracker/widgets/background.dart';
 import 'package:workouttracker/widgets/frostedBox.dart';
 import 'package:workouttracker/widgets/home/workoutCalendar.dart';
+import 'package:workouttracker/widgets/loading.dart';
 import 'account.dart';
 
 class Home extends StatelessWidget {
@@ -21,6 +25,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of<AuthService>(context);
+    DatabaseService database = DatabaseService(uid: authService.user.uid);
 
     return Scaffold(
       body: Stack(
@@ -34,24 +39,32 @@ class Home extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        "Hello dev.j3ns",
-                        style: TextStyle(fontSize: 25, color: Colors.white),
+                      StreamBuilder<UserData>(
+                        stream: database.userData,
+                        builder: (context, snapshot) {
+                          String username = "";
+                          if (snapshot.hasData) {
+                            username = snapshot.data.username;
+                          }
+
+                          return Text(
+                            "Hello " + username,
+                            style: TextStyle(fontSize: 25, color: Colors.white),
+                          );
+                        },
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.width * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.1,
+                        height: MediaQuery.of(context).size.width * 0.11,
+                        width: MediaQuery.of(context).size.width * 0.11,
                         child: FrostedBox(
-                          customColor: Color.fromRGBO(9, 234, 254, 0.4),
+                          colorHighlight: true,
                           onTap: () => openAccountScreen(context, authService),
                           borderRadius: 100,
                           child: Center(
-                            child: Text(
-                              "J",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
+                            child: FaIcon(
+                              FontAwesomeIcons.userAlt,
+                              color: Colors.white,
+                              size: 18,
                             ),
                           ),
                         ),

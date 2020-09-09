@@ -7,7 +7,7 @@ class UserData {
 
   factory UserData.fromDocument(DocumentSnapshot doc) {
     return UserData(
-      username: doc["username"],
+      username: doc.data()["username"],
     );
   }
 }

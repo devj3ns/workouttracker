@@ -21,20 +21,22 @@ class Workout {
 
   factory Workout.fromDocument(DocumentSnapshot doc) {
     return Workout(
-      uid: doc.documentID,
-      category: categories[doc["category"]], //translate id from db to string (see Map below)
-      duration: doc["duration"],
-      intensity: doc["intensity"],
-      rating: doc["rating"],
-      note: doc["note"],
-      timestamp: doc["timestamp"].toDate(),
+      uid: doc.id,
+      category: categories[doc
+          .data()["category"]], //translate id from db to string (see Map below)
+      duration: doc.data()["duration"],
+      intensity: doc.data()["intensity"],
+      rating: doc.data()["rating"],
+      note: doc.data()["note"],
+      timestamp: doc.data()["timestamp"].toDate(),
     );
   }
 
   Map<String, dynamic> toDocument() {
     return {
       "category": categories.keys.firstWhere((key) =>
-          categories[key] == this.category), //translate String to id for db (see Map below)
+          categories[key] ==
+          this.category), //translate String to id for db (see Map below)
       "duration": this.duration,
       "intensity": this.intensity,
       "rating": this.rating,

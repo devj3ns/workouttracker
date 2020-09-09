@@ -10,16 +10,16 @@ class DatabaseService {
 
   //collection reference
   final CollectionReference userDataCollection =
-      Firestore.instance.collection('userData');
+      FirebaseFirestore.instance.collection('userData');
 
   Future updateUserData(String username) async {
-    return await userDataCollection.document(uid).setData({
+    return await userDataCollection.doc(uid).set({
       'username': username,
     });
   }
 
   Stream<UserData> get userData {
-    return userDataCollection.document(uid).snapshots().map((doc) {
+    return userDataCollection.doc(uid).snapshots().map((doc) {
       return UserData.fromDocument(doc);
     });
   }
@@ -27,7 +27,7 @@ class DatabaseService {
   //add workout to db
   Future addWorkout(Workout workout) async {
     return await userDataCollection
-        .document(uid)
+        .doc(uid)
         .collection("workouts")
         .add(workout.toDocument());
   }
@@ -38,25 +38,25 @@ class DatabaseService {
       throw ("Cannot update workout in database because no uid is provided (workout.uid == null)!");
     } else {
       return await userDataCollection
-          .document(uid)
+          .doc(uid)
           .collection("workouts")
-          .document(workout.uid)
-          .updateData(workout.toDocument());
+          .doc(workout.uid)
+          .update(workout.toDocument());
     }
   }
 
   //delete workout from db
   Future deleteWorkout(Workout workout) async {
     return userDataCollection
-        .document(uid)
+        .doc(uid)
         .collection("workouts")
-        .document(workout.uid)
+        .doc(workout.uid)
         .delete();
   }
 
   //workout list from snapshot
   List<Workout> _workoutsFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
+    return snapshot.docs.map((doc) {
       return Workout.fromDocument(doc);
     }).toList();
   }
@@ -64,7 +64,7 @@ class DatabaseService {
   //get all workouts as stream
   Stream<List<Workout>> get workouts {
     return userDataCollection
-        .document(uid)
+        .doc(uid)
         .collection("workouts")
         .orderBy("timestamp", descending: true)
         .snapshots()
@@ -79,7 +79,7 @@ class DatabaseService {
         new DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
 
     return userDataCollection
-        .document(uid)
+        .doc(uid)
         .collection("workouts")
         .where("timestamp", isGreaterThan: startOfDay)
         .where("timestamp", isLessThanOrEqualTo: endOfDay)
@@ -96,7 +96,7 @@ class DatabaseService {
         new DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
 
     return await userDataCollection
-        .document(uid)
+        .doc(uid)
         .collection("workouts")
         .where("timestamp", isGreaterThan: startOfDay)
         .where("timestamp", isLessThanOrEqualTo: endOfDay)

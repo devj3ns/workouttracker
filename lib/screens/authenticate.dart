@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import 'package:workouttracker/shared/constants.dart';
 import 'package:workouttracker/services/auth.dart';
@@ -34,7 +35,7 @@ class _AuthenticateState extends State<Authenticate>
 
   AuthType authType = AuthType.Login;
 
-  void onButtonTab(AuthService auth) async {
+  void onRegisterSaveButtonTap(AuthService auth) async {
     if (_formKey.currentState.validate()) {
       setState(() => loading = true);
 
@@ -47,14 +48,29 @@ class _AuthenticateState extends State<Authenticate>
         result = await auth.signInWithEmailAndPassword(email, password);
       }
 
-      if (result is! FirebaseUser) {
+      if (result is! User) {
         //if an error occured
-
         setState(() {
           loading = false;
           error = result;
         });
       }
+    }
+  }
+
+  void onGoogleSignInButtonTap(AuthService auth) async {
+    setState(() => loading = true);
+
+    dynamic result;
+
+    result = await auth.signInWithGoogle();
+
+    if (result is! User) {
+      //if an error occured
+      setState(() {
+        loading = false;
+        error = result;
+      });
     }
   }
 
@@ -190,23 +206,34 @@ class _AuthenticateState extends State<Authenticate>
                         color: Colors.white,
                       ),
                     ),
-                    onTap: () => onButtonTab(_auth),
+                    onTap: () => onRegisterSaveButtonTap(_auth),
                   ),
                 ).addPaddingTop(15),
               ],
             ),
           ),
-          bottomNavigationBar: GestureDetector(
-            onTap: toggleAuthType,
-            child: Text(
-              "rather " + (authType != AuthType.Login ? "Login" : "Register"),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 20,
-              ),
-            ),
-          ).addPaddingBottom(30),
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: toggleAuthType,
+                child: Text(
+                  "rather " +
+                      (authType != AuthType.Login ? "Login" : "Register"),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 20,
+                  ),
+                ),
+              ).addPaddingBottom(4),
+              SignInButton(
+                Buttons.Google,
+                text: "Login with Google",
+                onPressed: () => onGoogleSignInButtonTap(_auth),
+              ).addPaddingBottom(8),
+            ],
+          ),
         ),
         loading
             ? Loading(
