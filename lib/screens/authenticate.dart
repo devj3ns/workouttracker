@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 
 import 'package:workouttracker/shared/constants.dart';
 import 'package:workouttracker/services/auth.dart';
-import 'package:workouttracker/shared/ensureVisibleWhenFocused.dart';
 import 'package:workouttracker/widgets/background.dart';
 import 'package:workouttracker/widgets/loading.dart';
 import 'package:workouttracker/widgets/roundIconButton.dart';
 import 'package:workouttracker/shared/widgetExtensions.dart';
+import 'package:workouttracker/shared/stringExtensions.dart';
 
 enum AuthType { Login, Register }
 
@@ -22,15 +22,15 @@ class _AuthenticateState extends State<Authenticate>
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
+  //we need them because then on _formKey.reset() only the name field (without) controller gets resetted when the authType changes!
+  final TextEditingController emailController = new TextEditingController();
+  final TextEditingController passwordController = new TextEditingController();
+
   //text field states
   String username = '';
   String email = '';
   String password = '';
   String error = '';
-
-  FocusNode focusNodeUsername = new FocusNode();
-  FocusNode focusNodeEmail = new FocusNode();
-  FocusNode focusNodePassword = new FocusNode();
 
   AuthType authType = AuthType.Login;
 
@@ -61,10 +61,14 @@ class _AuthenticateState extends State<Authenticate>
   void toggleAuthType() {
     if (authType == AuthType.Login) {
       setState(() {
+        _formKey.currentState.reset();
+        error = "";
         authType = AuthType.Register;
       });
     } else {
       setState(() {
+        _formKey.currentState.reset();
+        error = "";
         authType = AuthType.Login;
       });
     }
@@ -81,107 +85,128 @@ class _AuthenticateState extends State<Authenticate>
         Background(),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  SizedBox(
-                    height: height * 0.3,
-                  ),
-                  Text(
-                    authType == AuthType.Login ? "Login" : "Register",
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  AnimatedCrossFade(
-                    duration: Duration(milliseconds: 150),
-                    crossFadeState: authType == AuthType.Register
-                        ? CrossFadeState.showFirst
-                        : CrossFadeState.showSecond,
-                    firstChild: TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                        hintText: 'Name',
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (val) =>
-                          val.trim().isEmpty ? 'Enter your name' : null,
-                      onChanged: (val) {
-                        setState(() {
-                          username = val;
-                        });
-                      },
-                    ).addPaddingTop(30),
-                    secondChild: SizedBox(),
-                  ),
-                  TextFormField(
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 50.0),
+              children: [
+                SizedBox(
+                  height: height * 0.3,
+                ),
+                Text(
+                  authType == AuthType.Register ? "Register" : "Login",
+                  style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                AnimatedCrossFade(
+                  duration: Duration(milliseconds: 150),
+                  crossFadeState: authType == AuthType.Register
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: TextFormField(
                     decoration: textInputDecoration.copyWith(
-                      hintText: 'Email',
-                      prefixIcon: Icon(Icons.alternate_email),
+                      hintText: 'Name',
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    validator: (val) =>
-                        val.trim().isEmpty ? 'Enter an email' : null,
-                    onChanged: (val) {
-                      setState(() {
-                        email = val;
-                      });
-                    },
-                  ).addPaddingTop(10),
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(
-                      hintText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                    validator: (val) => val.length < 6
-                        ? 'Enter a password 6+ chars long'
+                    validator: authType == AuthType.Register
+                        ? (val) =>
+                            val.trim().isEmpty ? 'Please enter your name' : null
                         : null,
-                    obscureText: true,
                     onChanged: (val) {
                       setState(() {
-                        password = val;
+                        username = val;
                       });
                     },
-                  ).addPaddingTop(10),
-                  Center(
-                    child: RoundIconButton(
-                      icon: authType == AuthType.Login
-                          ? Icons.arrow_forward
-                          : Icons.check,
-                      onTap: () => onButtonTab(_auth),
+                    enabled: authType == AuthType.Register,
+                  ),
+                  secondChild: SizedBox(),
+                ).addPaddingTop(30),
+                TextFormField(
+                  controller: emailController,
+                  decoration: textInputDecoration.copyWith(
+                    hintText: 'Email',
+                    prefixIcon: Icon(Icons.alternate_email),
+                  ),
+                  validator: (val) =>
+                      !val.isEmail() ? 'Please enter a valid email' : null,
+                  onChanged: (val) {
+                    setState(() {
+                      email = val;
+                    });
+                  },
+                ).addPaddingTop(10),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: textInputDecoration.copyWith(
+                    hintText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  validator: (val) => val.length < 6
+                      ? 'Please enter a password 6+ chars long'
+                      : null,
+                  obscureText: true,
+                  onChanged: (val) {
+                    setState(() {
+                      password = val;
+                    });
+                  },
+                ).addPaddingTop(10),
+                AnimatedCrossFade(
+                  duration: Duration(milliseconds: 150),
+                  crossFadeState: error == ""
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  firstChild: Center(
+                    child: Text(
+                      error,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16.0,
+                      ),
+                      textAlign: TextAlign.center,
                     ).addPaddingTop(15),
                   ),
-                  Text(
-                    error,
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 14.0,
-                    ),
-                  ).addPaddingTop(12),
-                  SizedBox(
-                    height: authType == AuthType.Login
-                        ? height * 0.202
-                        : height * 0.1,
-                  ),
-                  GestureDetector(
-                    onTap: toggleAuthType,
-                    child: Text(
-                      "rather " +
-                          (authType != AuthType.Login ? "Login" : "Register"),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 20,
+                  secondChild: SizedBox(),
+                ),
+                Center(
+                  child: RoundIconButton(
+                    iconWidget: AnimatedCrossFade(
+                      duration: Duration(milliseconds: 150),
+                      crossFadeState: authType == AuthType.Register
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      firstChild: Icon(
+                        Icons.arrow_forward,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      secondChild: Icon(
+                        Icons.check,
+                        size: 30,
+                        color: Colors.white,
                       ),
                     ),
+                    onTap: () => onButtonTab(_auth),
                   ),
-                ],
-              ),
+                ).addPaddingTop(15),
+              ],
             ),
           ),
+          bottomNavigationBar: GestureDetector(
+            onTap: toggleAuthType,
+            child: Text(
+              "rather " + (authType != AuthType.Login ? "Login" : "Register"),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 20,
+              ),
+            ),
+          ).addPaddingBottom(30),
         ),
         loading
             ? Loading(

@@ -28,7 +28,7 @@ class AuthService with ChangeNotifier {
     } catch (e) {
       switch (e.code) {
         case ("ERROR_WRONG_PASSWORD"):
-          return ("You entered the wrong password.");
+          return ("Incorrect password. Please try again");
         case ("ERROR_USER_NOT_FOUND"):
           return ("No user found with that email.");
         default:

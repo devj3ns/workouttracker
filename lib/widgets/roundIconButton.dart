@@ -4,12 +4,14 @@ class RoundIconButton extends StatelessWidget {
   final Function onTap;
   final bool disable;
   final IconData icon;
+  final Widget iconWidget;
   final String heroTag;
 
   RoundIconButton({
     @required this.onTap,
     this.disable,
-    @required this.icon,
+    this.icon,
+    this.iconWidget,
     this.heroTag = "",
   });
 
@@ -55,11 +57,13 @@ class RoundIconButton extends StatelessWidget {
             ],
           ),
           child: Center(
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 30,
-            ),
+            child: iconWidget == null && icon != null
+                ? Icon(
+                    icon,
+                    color: iconColor,
+                    size: 30,
+                  )
+                : iconWidget,
           ),
         ),
       ),

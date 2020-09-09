@@ -7,4 +7,11 @@ extension WidgetExtensions on Widget {
       child: this,
     );
   }
+
+  Widget addPaddingBottom(double height) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: height),
+      child: this,
+    );
+  }
 }
