@@ -5,11 +5,11 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import 'package:workouttracker/shared/constants.dart';
 import 'package:workouttracker/services/auth.dart';
-import 'package:workouttracker/widgets/background.dart';
-import 'package:workouttracker/widgets/loading.dart';
-import 'package:workouttracker/widgets/roundIconButton.dart';
-import 'package:workouttracker/shared/widgetExtensions.dart';
-import 'package:workouttracker/shared/stringExtensions.dart';
+import 'package:workouttracker/shared/widgets/background.dart';
+import 'package:workouttracker/shared/extensions/widgetExtensions.dart';
+import 'package:workouttracker/shared/extensions/stringExtensions.dart';
+import 'package:workouttracker/shared/widgets/loading.dart';
+import 'package:workouttracker/shared/widgets/roundIconButton.dart';
 
 enum AuthType { Login, Register }
 
@@ -140,7 +140,7 @@ class _AuthenticateState extends State<Authenticate>
                     enabled: authType == AuthType.Register,
                   ),
                   secondChild: SizedBox(),
-                ).addPaddingTop(30),
+                ).withPadding(top: 30),
                 TextFormField(
                   controller: emailController,
                   decoration: textInputDecoration.copyWith(
@@ -154,7 +154,7 @@ class _AuthenticateState extends State<Authenticate>
                       email = val;
                     });
                   },
-                ).addPaddingTop(10),
+                ).withPadding(top: 10),
                 TextFormField(
                   controller: passwordController,
                   decoration: textInputDecoration.copyWith(
@@ -170,7 +170,7 @@ class _AuthenticateState extends State<Authenticate>
                       password = val;
                     });
                   },
-                ).addPaddingTop(10),
+                ).withPadding(top: 10),
                 AnimatedCrossFade(
                   duration: Duration(milliseconds: 150),
                   crossFadeState: error == ""
@@ -184,7 +184,7 @@ class _AuthenticateState extends State<Authenticate>
                         fontSize: 16.0,
                       ),
                       textAlign: TextAlign.center,
-                    ).addPaddingTop(15),
+                    ).withPadding(top: 15),
                   ),
                   secondChild: SizedBox(),
                 ),
@@ -208,7 +208,7 @@ class _AuthenticateState extends State<Authenticate>
                     ),
                     onTap: () => onRegisterSaveButtonTap(_auth),
                   ),
-                ).addPaddingTop(15),
+                ).withPadding(top: 15),
               ],
             ),
           ),
@@ -226,12 +226,12 @@ class _AuthenticateState extends State<Authenticate>
                     fontSize: 20,
                   ),
                 ),
-              ).addPaddingBottom(4),
+              ).withPadding(bottom: 4),
               SignInButton(
                 Buttons.Google,
                 text: "Login with Google",
                 onPressed: () => onGoogleSignInButtonTap(_auth),
-              ).addPaddingBottom(8),
+              ).withPadding(bottom: 8),
             ],
           ),
         ),

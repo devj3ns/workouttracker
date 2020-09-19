@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:workouttracker/widgets/mySliderThumbs.dart';
+
+import 'mySliderThumbs.dart';
 
 class MySlider extends StatefulWidget {
   final double sliderHeight;

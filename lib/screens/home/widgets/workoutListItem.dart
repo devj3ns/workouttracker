@@ -3,10 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:workouttracker/models/workout.dart';
-import 'package:workouttracker/screens/workoutDetails.dart';
+import 'package:workouttracker/screens/workoutDetails/workoutDetails.dart';
 import 'package:workouttracker/services/database.dart';
 import 'package:workouttracker/shared/routes.dart';
-import 'package:workouttracker/widgets/frostedBox.dart';
+import 'package:workouttracker/shared/widgets/frostedBox.dart';
 
 class WorkoutListItem extends StatelessWidget {
   WorkoutListItem({

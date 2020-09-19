@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:workouttracker/screens/authenticate.dart';
-import 'package:workouttracker/screens/home.dart';
+import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/screens/authenticate/authenticate.dart';
+import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/screens/home/home.dart';
 
 import 'package:workouttracker/services/auth.dart';
-import 'package:workouttracker/widgets/loading.dart';
+import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/shared/widgets/loading.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,6 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  // Create the initilization Future outside of `build`:
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override

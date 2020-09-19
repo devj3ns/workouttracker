@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:workouttracker/models/userData.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/services/database.dart';
-import 'package:workouttracker/widgets/loading.dart';
+import 'package:workouttracker/shared/widgets/loading.dart';
 
 class Account extends StatelessWidget {
   final AuthService authService;

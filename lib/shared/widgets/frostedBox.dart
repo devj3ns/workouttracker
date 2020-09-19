@@ -25,13 +25,14 @@ class FrostedBox extends StatelessWidget {
       borderRadius: BorderRadius.circular(borderRadius - 1),
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(
-              color: borderHighlight
-                  ? Colors.black12.withOpacity(0.5)
-                  : Colors.transparent),
-        ),
+        decoration: borderHighlight
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: Colors.black12.withOpacity(0.5),
+                ),
+              )
+            : null,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(borderRadius - 1),
           child: BackdropFilter(

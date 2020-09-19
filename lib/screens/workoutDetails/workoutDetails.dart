@@ -4,10 +4,15 @@ import 'package:intl/intl.dart';
 
 import 'package:workouttracker/models/workout.dart';
 import 'package:workouttracker/services/database.dart';
-import 'package:workouttracker/widgets/roundIconButton.dart';
-import 'package:workouttracker/widgets/frostedBox.dart';
-import 'package:workouttracker/widgets/mySlider.dart';
 import 'package:workouttracker/shared/constants.dart';
+import 'package:workouttracker/shared/extensions/widgetExtensions.dart';
+import 'package:workouttracker/shared/widgets/frostedBox.dart';
+import 'package:workouttracker/shared/widgets/roundIconButton.dart';
+
+import 'widgets/RoundedSquareButton.dart';
+import 'widgets/mySlider.dart';
+
+enum ScreenType { AddWorkout, ViewWorkout }
 
 class WorkoutDetails extends StatefulWidget {
   final DateTime dateTime;
@@ -28,20 +33,38 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
   bool disableSaveButton = true;
   FocusNode noteFocusNote = new FocusNode();
 
-  //form values
   String category;
   double duration;
   double intensity = 0; //0, 5 or 10
   double rating = 0; //0, 5 or 10
   String note = '';
+  DateTime timestamp;
 
-  bool get isAddWorkoutScreen => widget.initialWorkoutData == null;
-  String get dateStr => DateFormat.MMMEd().format(widget.dateTime);
-  String get timeStr => DateFormat.Hm().format(widget.dateTime);
+  ScreenType screenType;
+  String get dateStr => DateFormat.MMMEd().format(timestamp);
+  String get timeStr => DateFormat.Hm().format(timestamp);
 
   @override
   void initState() {
     super.initState();
+
+    screenType = widget.initialWorkoutData == null
+        ? ScreenType.AddWorkout
+        : ScreenType.ViewWorkout;
+
+    if (screenType == ScreenType.AddWorkout) {
+      //todo: if widget.dateTime is not today show a time picker to select time
+      timestamp = DateTime(
+        widget.dateTime.year,
+        widget.dateTime.month,
+        widget.dateTime.day,
+        DateTime.now().hour,
+        DateTime.now().minute,
+        DateTime.now().second,
+      );
+    } else {
+      timestamp = widget.dateTime;
+    }
 
     if (widget.initialWorkoutData != null) {
       initFormValues();
@@ -56,24 +79,47 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
     note = widget.initialWorkoutData.note;
   }
 
-  void save({bool add}) async {
-    Workout workout = Workout(
-      uid: widget.initialWorkoutData == null
-          ? null
-          : widget.initialWorkoutData.uid,
-      category: category,
-      duration: duration.toInt(),
-      intensity: intensity.toInt(),
-      rating: rating.toInt(),
-      note: note,
-      timestamp: widget.dateTime,
-    );
+  void save() async {
+    if (!isFormValid()) {
+      throw "Form is not valid but save button was pressed!";
+    }
 
-    add
-        ? await widget.database.addWorkout(workout)
-        : await widget.database.updateWorkout(workout);
+    if (screenType == ScreenType.AddWorkout) {
+      //add new workout
+
+      Workout workout = Workout(
+        category: category,
+        duration: duration.toInt(),
+        intensity: intensity.toInt(),
+        rating: rating.toInt(),
+        note: note,
+        timestamp: timestamp,
+      );
+
+      await widget.database.addWorkout(workout);
+    } else {
+      //update existing workout
+
+      Workout workout = Workout(
+        uid: widget.initialWorkoutData.uid,
+        category: category,
+        duration: duration.toInt(),
+        intensity: intensity.toInt(),
+        rating: rating.toInt(),
+        note: note,
+      );
+
+      await widget.database.updateWorkout(workout);
+    }
 
     setState(() => disableSaveButton = true);
+  }
+
+  bool isFormValid() {
+    return duration != null &&
+        intensity != null &&
+        category != null &&
+        rating != null;
   }
 
   //the slider widgets use this method to provide their values to this stateful widget
@@ -85,24 +131,22 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
     if (newDuration != null) {
       setState(() {
         duration = newDuration;
-        if (duration > 0) {
-          disableSaveButton = false;
-        }
+        disableSaveButton = isFormValid() ? false : true;
       });
     } else if (newIntensity != null) {
       setState(() {
         intensity = newIntensity;
-        disableSaveButton = false;
+        disableSaveButton = isFormValid() ? false : true;
       });
     } else if (newRating != null) {
       setState(() {
         rating = newRating;
-        disableSaveButton = false;
+        disableSaveButton = isFormValid() ? false : true;
       });
-    } else if (category != null) {
+    } else if (newCategory != null) {
       setState(() {
         category = newCategory;
-        disableSaveButton = false;
+        disableSaveButton = isFormValid() ? false : true;
       });
     }
   }
@@ -132,20 +176,10 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.14,
-                            width: MediaQuery.of(context).size.width * 0.14,
-                            child: FrostedBox(
-                              customColor: Colors.blue.withOpacity(0.9),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                                size: 23,
-                              ),
-                            ),
+                          RoundedSquareButton(
+                            icon: Icons.arrow_back_ios,
+                            onTap: Navigator.of(context).pop,
+                            color: Colors.blue,
                           ),
                           Column(
                             children: [
@@ -157,50 +191,38 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(
-                                height: 5,
-                              ),
                               Text(
                                 timeStr,
                                 style: TextStyle(
                                   color: Colors.black87.withOpacity(0.7),
                                 ),
-                              ),
+                              ).withPadding(top: 5),
                             ],
                           ),
-                          isAddWorkoutScreen
-                              ? SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.14,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.14,
+                          screenType == ScreenType.AddWorkout
+                              ? RoundedSquareButton(
+                                  icon: Icons.info_outline,
+                                  onTap: () => {},
+                                  color: Colors.grey,
                                 )
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.14,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.14,
-                                  child: FrostedBox(
-                                    onTap: () {
-                                      widget.database.deleteWorkout(
-                                        Workout(
-                                            uid: widget.initialWorkoutData.uid),
-                                      );
-                                      Navigator.of(context).pop();
-                                    },
-                                    customColor: Colors.grey.withOpacity(0.8),
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                      size: 23,
-                                    ),
-                                  ),
+                              : RoundedSquareButton(
+                                  icon: Icons.delete,
+                                  onTap: () {
+                                    widget.database.deleteWorkout(
+                                      Workout(
+                                          uid: widget.initialWorkoutData.uid),
+                                    );
+                                    Navigator.of(context).pop();
+                                  },
+                                  color: Colors.redAccent,
                                 ),
                         ],
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        isAddWorkoutScreen ? "Track Workout" : "Edit Workout",
+                        screenType == ScreenType.AddWorkout
+                            ? "Track Workout"
+                            : "Edit Workout",
                         style: TextStyle(
                           color: Colors.black87,
                           fontSize: 27,
@@ -286,13 +308,14 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                       Center(
                         child: RoundIconButton(
                           heroTag: "TransitionWithWorkoutDetailScreen",
-                          icon: isAddWorkoutScreen ? Icons.add : Icons.save,
+                          icon: screenType == ScreenType.AddWorkout
+                              ? Icons.add
+                              : Icons.save,
                           onTap: () {
-                            if (isAddWorkoutScreen) {
-                              save(add: true);
+                            save();
+
+                            if (screenType == ScreenType.AddWorkout) {
                               Navigator.pop(context);
-                            } else {
-                              save(add: false);
                             }
                           },
                           disable: disableSaveButton,

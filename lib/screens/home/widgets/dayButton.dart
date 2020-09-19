@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:workouttracker/models/workout.dart';
 import 'package:workouttracker/services/auth.dart';
 import 'package:workouttracker/services/database.dart';
-import 'package:workouttracker/widgets/frostedBox.dart';
-import 'package:workouttracker/shared/dateExtensions.dart';
+import 'package:workouttracker/shared/widgets/frostedBox.dart';
+import 'package:workouttracker/shared/extensions/dateExtensions.dart';
 
 class DayButton extends StatelessWidget {
   final DateTime date;
@@ -34,7 +34,7 @@ class DayButton extends StatelessWidget {
       child: InkWell(
         onTap: () => changeDate(date),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(9.0),
           child: Column(
             children: <Widget>[
               Text(

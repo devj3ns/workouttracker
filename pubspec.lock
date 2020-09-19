@@ -233,6 +233,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
+  isoweek:
+    dependency: "direct main"
+    description:
+      name: isoweek
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   js:
     dependency: transitive
     description:
