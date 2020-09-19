@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/screens/authenticate/authenticate.dart';
-import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/screens/home/home.dart';
 
-import 'package:workouttracker/services/auth.dart';
-import 'file:///C:/Users/jensb/GoogleDrive/Work/FlutterProjects/workouttracker/lib/shared/widgets/loading.dart';
+import 'services/auth.dart';
+import 'shared/widgets/loading.dart';
+import 'screens/authenticate/authenticate.dart';
+import 'screens/home/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
