@@ -1,9 +1,7 @@
 # workouttracker
 
-A cloudbased workout tracker app made with Flutter (backend: Firebase). 
+A cloudbased workout tracker app I made with Flutter & Firebase last year.
 
-I started the project at the beginning of august
+On Instagram (https://www.instagram.com/dev.j3ns/) I uploaded devlogs about the app. 
 
-On Instagram (https://www.instagram.com/dev.j3ns/) I upload devlogs about the app. Check them out!
-
-Regarding the code: if I were to redo the app today, I would program a lot differently :)
+Regarding the code: Since then I learned a lot and if I would do this app again I would make a lot differently :)
